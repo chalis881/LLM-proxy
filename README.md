@@ -81,6 +81,63 @@ http://localhost:3456/dashboard
 | `GET` | `/dashboard` | Web 面板 |
 | `GET` | `/health` | 健康检查 |
 
+## 配置说明
+
+### 端口
+
+默认端口 `3456`，通过环境变量修改（`.env` 文件）：
+
+```bash
+PORT=8080
+```
+
+### 上游配置
+
+编辑 `upstreams.json` 添加/修改上游。每个上游支持以下字段：
+
+| 字段 | 说明 | 示例 |
+|------|------|------|
+| `baseURL` | 上游 API 地址 | `https://api.deepseek.com` |
+| `apiKey` | API Key，支持 `${ENV_VAR}` 引用环境变量 | `${DEEPSEEK_API_KEY}` |
+| `apiFormat` | 协议格式 | `openai` / `anthropic` |
+| `cacheMode` | 缓存策略 | `active`（注入 cache_control）/ `implicit`（仅标准化）/ `none` |
+| `multimodal` | 是否保留图片/音频 | `true` / `false` |
+| `supportsCacheControl` | 上游是否支持显式缓存标记 | `true` / `false` |
+| `priority` | 同模型多上游时的优先级（升序） | `100` |
+
+### 切换上游
+
+三种方式指定请求走哪个上游：
+1. **按 model 自动路由**：`baseURL=http://localhost:3456`，请求体的 `model` 字段决定上游
+2. **URL 锁定**：`baseURL=http://localhost:3456/x-upstream/<name>`
+3. **Header 锁定**：添加请求头 `x-upstream: <name>`
+
+## 常见问题
+
+### 端口被占用
+
+启动报错 `EADDRINUSE`，说明 3456 端口已被其他程序占用。修改 `.env`：
+
+```bash
+PORT=8080
+```
+
+### 缓存没有命中
+
+- **确认内容超过 1024 Token**：厂商要求缓存内容至少 1024 Token，短对话不会命中
+- **检查 system prompt 是否稳定**：含时间戳、UUID、git 状态等动态内容会破坏前缀稳定性
+- **确认 `cacheMode` 设置**：`active` 才会注入 `cache_control` 标记；`none` 关闭所有缓存优化
+- **查看 Dashboard**：访问 `http://localhost:3456/dashboard` 查看实时命中率
+
+### 上游报错 401 / 403
+
+- 检查 `.env` 中对应的 API Key 是否正确填写
+- `upstreams.json` 中 `apiKey` 支持 `${ENV_VAR}` 语法引用环境变量，避免硬编码
+
+### Anthropic 协议如何接入
+
+将客户端 `baseURL` 指向 `http://localhost:3456/v1/messages`，并在 `upstreams.json` 中将对应上游的 `apiFormat` 设为 `anthropic`。显式缓存注入仅在 `anthropic` 协议下生效。
+
 ## 项目结构
 
 ```
