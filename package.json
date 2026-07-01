@@ -1,0 +1,52 @@
+{
+  "name": "llm-cache-proxy",
+  "version": "1.0.0",
+  "description": "LLM API cache proxy with multi-upstream support and explicit cache injection",
+  "type": "module",
+  "license": "MIT",
+  "author": "chalis881",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chalis881/LLM-proxy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chalis881/LLM-proxy/issues"
+  },
+  "homepage": "https://github.com/chalis881/LLM-proxy#readme",
+  "keywords": [
+    "llm",
+    "cache",
+    "proxy",
+    "prompt-caching",
+    "anthropic",
+    "openai",
+    "qwen",
+    "deepseek",
+    "cache-control"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "node --no-deprecation --import tsx --watch src/index.ts",
+    "start": "node --no-deprecation --import tsx src/index.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "bin": {
+    "llm-proxy": "bin/llm-proxy.mjs"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.0",
+    "dotenv": "^16.4.0",
+    "hono": "^4.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vitest": "^4.1.9"
+  }
+}

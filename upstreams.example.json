@@ -1,0 +1,92 @@
+{
+  "_meta": {
+    "说明": "multimodal: true=保留图片/音频, false=自动过滤非文本内容",
+    "apiFormat": "openai=ChatCompletions, anthropic=Messages",
+    "cacheMode": "auto=被动, active=主动注入cache_control, none=关闭",
+    "defaultUpstream": "deepseek"
+  },
+  "deepseek": {
+    "baseURL": "https://api.deepseek.com",
+    "apiKey": "sk-xxxxxxxxxxxxxxxx",
+    "models": [
+      {
+        "id": "deepseek-v4-flash",
+        "toolCalling": true,
+        "thinking": true,
+        "maxInputTokens": 131072,
+        "maxOutputTokens": 16384
+      },
+      {
+        "id": "deepseek-v4-pro",
+        "toolCalling": true,
+        "thinking": true,
+        "maxInputTokens": 262144,
+        "maxOutputTokens": 32768
+      }
+    ],
+    "apiFormat": "openai",
+    "cacheMode": "none",
+    "normalization": "safe",
+    "multimodal": false,
+    "supportsCacheControl": true,
+    "disabled": false
+  },
+  "minimax": {
+    "baseURL": "https://api.minimaxi.com/anthropic/v1",
+    "apiKey": "sk-xxxxxxxxxxxxxxxx",
+    "models": [
+      {
+        "id": "MiniMax-M3",
+        "toolCalling": true,
+        "imageInput": true,
+        "thinking": true
+      },
+      {
+        "id": "MiniMax-M2.7",
+        "toolCalling": true,
+        "thinking": true
+      }
+    ],
+    "apiFormat": "anthropic",
+    "cacheMode": "active",
+    "normalization": "safe",
+    "multimodal": true,
+    "supportsCacheControl": false,
+    "disabled": false
+  },
+  "qwen": {
+    "baseURL": "https://dashscope.aliyuncs.com/apps/anthropic/v1",
+    "apiKey": "sk-xxxxxxxxxxxxxxxx",
+    "models": [
+      {
+        "id": "qwen3.7-plus",
+        "toolCalling": true,
+        "imageInput": true,
+        "thinking": true
+      },
+      {
+        "id": "qwen3.7-max",
+        "toolCalling": true,
+        "imageInput": true,
+        "thinking": true
+      }
+    ],
+    "apiFormat": "anthropic",
+    "cacheMode": "active",
+    "normalization": "safe",
+    "multimodal": true,
+    "supportsCacheControl": true,
+    "disabled": false
+  },
+  "ollama": {
+    "baseURL": "http://localhost:11434/v1",
+    "apiKey": "ollama",
+    "models": [],
+    "apiFormat": "openai",
+    "cacheMode": "none",
+    "normalization": "safe",
+    "multimodal": false,
+    "supportsCacheControl": true,
+    "disabled": false
+  }
+}
