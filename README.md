@@ -83,6 +83,34 @@ http://localhost:3456/dashboard
 
 ## 配置说明
 
+### 缓存模式（cacheMode）
+
+`upstreams.json` 中每个上游可独立配置缓存策略，核心在于「清理什么」与「是否注入标记」的取舍：
+
+| cacheMode | normalization | 清理力度 | 注入 cache_control | 适用场景 |
+|---|---|---|---|---|
+| `none` | — | 仅 system 重排，内容一字不改 | ❌ | 上游不支持缓存，或需要完全透传原样内容 |
+| `implicit` | — | system/assistant/tool_result 激进清理；普通 user 保守清理 | ❌ | DeepSeek 等自动前缀缓存厂商（无显式标记能力） |
+| `active` | `safe`（默认） | 所有消息保守清理（只清理时间戳/UUID/长 ID 等绝对动态值） | ✅ | 千问 Anthropic 端点等支持显式缓存的厂商（生产默认） |
+| `active` | `aggressive` | 普通 user 保守；system/assistant/tool_result 激进（额外清理 IP/PID/端口/百分比） | ✅ | 编码智能体等缓存优先场景（可能误伤业务数据） |
+
+**关键区别**：
+
+- **none vs implicit**：两者都不注入 cache_control。但 `none` 完全不动消息内容（仅 system 重排），`implicit` 会激进清理动态字段以提升厂商自动缓存命中率
+- **implicit vs active**：`implicit` 清理更激进（因为只能靠厂商自动匹配前缀，需尽量消除动态干扰）；`active` 可以精准打标记，清理策略更保守以保护业务数据
+- **safe vs aggressive**：仅 `active` 模式下生效。`safe` 保护 system/assistant/tool_result 中的事实数据（IP、端口等视为业务数据保留）；`aggressive` 将这些视为噪声清理掉，换取更高命中率
+
+**清理策略分层**（按消息角色）：
+
+| 消息类型 | safe 模式 | aggressive / implicit 模式 |
+|---|---|---|
+| 普通 user | 保守清理 | 保守清理 |
+| system | 保守清理 | 激进清理 |
+| assistant | 保守清理 | 激进清理 |
+| tool_result | 保守清理 | 激进清理 |
+
+> 设计原则：普通 user 消息始终保守清理（保护用户输入的事实数据）；system/assistant/tool_result 在激进模式下清理更多动态噪声（这些消息通常是模板/工具输出，噪声多、缓存价值高）。
+
 ### 端口
 
 默认端口 `3456`，通过环境变量修改（`.env` 文件）：
