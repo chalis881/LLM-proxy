@@ -48,6 +48,15 @@ cd llm-cache-proxy
 npm run dev
 ```
 
+### 一键启停（Windows PowerShell）
+
+```powershell
+.\proxy.ps1 start    # 后台启动
+.\proxy.ps1 stop     # 停止
+.\proxy.ps1 restart  # 重启
+.\proxy.ps1 status   # 查看状态
+```
+
 客户端只需改 base_url：
 ```typescript
 const client = new OpenAI({
